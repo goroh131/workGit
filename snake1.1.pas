@@ -13,7 +13,7 @@ type
 var
 	Snake:array [1..10000] of CoorXY;
 	Tail:array[2..10000] of CoorXY;
-	Key,i,MSn,LengthSnake,Ratio,CoorX,CoorY,ScreenW,ScreenH:integer;
+	Key,Step,i,MSn,LengthSnake,Ratio,CoorX,CoorY,ScreenW,ScreenH:integer;
 	Food:CoorXY;
 	SkinSnake,SkinFood:char;
 	GameOver,PosSnake:boolean;
@@ -31,6 +31,7 @@ end;
 {INITIALITE VAR}
 procedure Initialize;
 begin
+	Step := 5;
 	EndOver := '------ Game Over ------';
 	Victory := '****** VICTORY ******';
 	ScreenW := ScreenWidth;
@@ -75,7 +76,7 @@ begin
 	   (Snake[1].y = Food.y) then begin
 		  GotoXY(Food.x, Food.y);
 		  write(' ');
-		  LengthSnake := LengthSnake + 1;
+		  LengthSnake := LengthSnake + Step;
 		repeat
 			Food := randFood(ScreenW, ScreenH);
 			PosSnake := true;
@@ -189,11 +190,11 @@ begin
 	GotoXY((ScreenW div 2)-(length(Msg) div 2), ScreenH div 2);
 	write(Msg);
 	GotoXY((ScreenW div 2)-(length(Msg) div 2) + 7, ScreenH div 2 + 1);
-	write('You Eat ', LengthSnake, ' ');
+	write('You Eat ', (LengthSnake - 1) div Step, ' ');
 	if LengthSnake >= 1000 then begin
  		GotoXY((ScreenW div 2)-(length(Msg) div 2) + 7, ScreenH div 2 + 2);
 		write('Revard ');
-		for i:= 1 to LengthSnake div 1000 do
+		for i:= 1 to (LengthSnake - 1) div 1000 do
 			write('*');
 	end;
 end;
@@ -207,7 +208,7 @@ begin
 		DrawFood;
 		EatFood;
 		DrawSnake;
-		write('Eat: ', LengthSnake);
+		write('Eat: ', (LengthSnake - 1) div Step);
 		DrawWalls;
 		UpdateSnake;
 		Movement;

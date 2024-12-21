@@ -240,9 +240,10 @@ begin
 	GotoXY((ScreenW div 2)-(length(Msg) div 2) + 7, ScreenH div 2 + 1);
 	NewRec;
 	write('You Eat ', (Rec) div Step, ' ');
-	if NewRecord then
-		TextColor(Yellow);
-		write('RECORD ');
+	if NewRecord then begin
+		TextColor(Yellow) {COLOR RECORD};
+		write('RECORD! ');
+	end;
 	if LengthSnake >= 1000 then begin
  		GotoXY((ScreenW div 2)-(length(Msg) div 2) + 7, ScreenH div 2 + 2);
 		write('Reward ');

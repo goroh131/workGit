@@ -11,12 +11,13 @@ type
 		x, y:integer;
 	end;
 var
+	F:text;
 	Snake:array [1..10000] of CoorXY;
 	Tail:array[2..10000] of CoorXY;
-	RT,Key,Step,i,MSn,LengthSnake,Ratio,CoorX,CoorY,ScreenW,ScreenH:integer;
+	Rec,RT,Key,Step,i,MSn,LengthSnake,Ratio,CoorX,CoorY,ScreenW,ScreenH:integer;
 	Food:CoorXY;
 	SkinSnake,SkinFood,SkinWalls:char;
-	GameOver,PosSnake:boolean;
+	GameOver,PosSnake,NewRecord:boolean;
 	EndOver,Victory:string;
 {'F' RANDOMFOOD}
 function randFood(w, h:integer):CoorXY;
@@ -189,22 +190,69 @@ begin
 			GameOver := true;
 	end;
 end;
+{NEW RECORD}
+procedure NewRec;
+var
+	number:integer;
+begin
+	{$I-}
+	number := 0;
+	assign(F, 'RecordCoin.txt');
+	reset(F);
+	if IOResult <> 0 then begin
+		rewrite(F);
+		write(F, number);
+	end;
+	
+	close(F);
+	reset(F);
+	read(F, number);
+	if IOResult <> 0 then begin
+		rewrite (F);
+		write(F, number);
+	end;
+	{$I+}
+	close(F);
+	if (LengthSnake - 1 > number) and (number > 0) then begin
+		rewrite(F);
+		write(F, LengthSnake);
+		NewRecord := true;
+		close(F);
+		Rec := LengthSnake - 1;
+	end
+	else if number = 0 then begin
+		rewrite(F);
+		write(F, LengthSnake - 1);
+		close(F);
+		NewRecord := false;
+		Rec := LengthSnake - 1;
+	end
+	else begin
+		NewRecord := false;
+		Rec := LengthSnake - 1;
+	end;
+end;
 {MESSAGE}
 procedure Message(Msg:string);
 begin
 	GotoXY((ScreenW div 2)-(length(Msg) div 2), ScreenH div 2);
 	write(Msg);
 	GotoXY((ScreenW div 2)-(length(Msg) div 2) + 7, ScreenH div 2 + 1);
-	write('You Eat ', (LengthSnake - 1) div Step, ' ');
+	NewRec;
+	write('You Eat ', (Rec) div Step, ' ');
+	if NewRecord then
+		TextColor(Yellow);
+		write('RECORD ');
 	if LengthSnake >= 1000 then begin
  		GotoXY((ScreenW div 2)-(length(Msg) div 2) + 7, ScreenH div 2 + 2);
-		write('Revard ');
+		write('Reward ');
 		for i:= 1 to (LengthSnake - 1) div 1000 do
 			write('*');
 	end;
 end;
 {MAIN}
 begin
+	randomize;
 	clrscr;
 	Initialize;
 	repeat
